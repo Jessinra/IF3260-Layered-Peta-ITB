@@ -99,8 +99,8 @@ bool Master::isInsideWindow(int x, int y) {
 }
 
 void Master::assignColor(int x, int y, unsigned int color) {
-    if (isInsideWindow(x, y)) {
-        int location = x * xmultiplier + xadder + y * ymultiplier + yadder;
+    int location = x * xmultiplier + xadder + y * ymultiplier + yadder;
+    if (isInsideWindow(x, y) && *((unsigned int *) (buffer + location)) == 0) {
         *((unsigned int *) (buffer + location)) = color;
     }
 }
@@ -195,10 +195,15 @@ void Master::drawLine(int positionX, int positionY, const Line &line) {
     // Bresenham's line algorithm with gradient coloring
 
     // Position section
-    int xStart = line.getStartPixel().getX();
-    int yStart = line.getStartPixel().getY();
-    int xEnd = line.getEndPixel().getX();
-    int yEnd = line.getEndPixel().getY();
+    int xStart = line.getStartPixel().getX() + positionX;
+    int yStart = line.getStartPixel().getY() + positionY;
+    int xEnd = line.getEndPixel().getX() + positionX;
+    int yEnd = line.getEndPixel().getY() + positionY;
+
+    if(max(xStart, xEnd) < 0 || min(xStart, xEnd) >= xend)
+        return;
+    if(max(yStart, yEnd) < 0 || min(yStart, yEnd) >= yend)
+        return;
 
     // Color section
     int colorStart = line.getStartPixel().getColor();
@@ -226,19 +231,16 @@ void Master::drawLine(int positionX, int positionY, const Line &line) {
     float blue = colorStart & 0xff;
 
     if (xStart == xEnd) {
-        if (xStart + positionX >= this->xstart &&
-            xStart + positionX < this->xend) {
-            for (int y = yStart; y != yEnd + yStep; y += yStep) {
-                unsigned int color = ((unsigned int) floor(red) << 16) + ((unsigned int) floor(green) << 8) +
-                                     ((unsigned int) floor(blue));
-                if (frameColor(positionX + xStart, positionY + y) == 0) {
-                    assignColor(positionX + xStart, positionY + y, color);
-                }
-
-                red += redStep;
-                green += greenStep;
-                blue += blueStep;
+        for (int y = yStart; y != yEnd + yStep; y += yStep) {
+            unsigned int color = ((unsigned int) floor(red) << 16) + ((unsigned int) floor(green) << 8) +
+                                 ((unsigned int) floor(blue));
+            if (frameColor(xStart, y) == 0) {
+                assignColor(xStart, y, color);
             }
+
+            red += redStep;
+            green += greenStep;
+            blue += blueStep;
         }
         return;
     }
@@ -249,8 +251,8 @@ void Master::drawLine(int positionX, int positionY, const Line &line) {
     for (int x = xStart; x != xEnd + xStep;) {
         unsigned int color =
                 ((unsigned int) floor(red) << 16) + ((unsigned int) floor(green) << 8) + ((unsigned int) floor(blue));
-        if (frameColor(positionX + x, positionY + y) == 0) {
-            assignColor(positionX + x, positionY + y, color);
+        if (frameColor(x, y) == 0) {
+            assignColor(x, y, color);
         }
 
         if (error >= 0.5) {
