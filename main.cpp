@@ -20,30 +20,44 @@ using namespace std;
 int zoom = 0;
 int moveHor = 0;
 int moveVer = 0;
+int speedx = 1;
+int speedy = 1;
 bool keepreading;
 
-void *readinput(void *thread id) {
+void *readinput(void *thread_id) {
     char c;
     while (keepreading) {
         c = getchar();
         /* TODO */
         if(c == 'w' || c == 'W'){
-            --moveVer;
-        }
-        else if(c == 'a' || c == 'A'){
-            --moveHor;
-        }
-        else if(c == 's' || c == 'S'){
             ++moveVer;
         }
-        else if(c == 'd' || c == 'D'){
+        else if(c == 'a' || c == 'A'){
             ++moveHor;
+        }
+        else if(c == 's' || c == 'S'){
+            --moveVer;
+        }
+        else if(c == 'd' || c == 'D'){
+            --moveHor;
         }
         else if(c == 'j' || c == 'J'){
             --zoom;
         }
         else if(c == 'k' || c == 'K'){
             ++zoom;
+        }
+        else if(c == 'u' || c == 'U'){
+            if(speedx>1 && speedy>1){
+                --speedx;
+                --speedy;
+            }
+        }
+        else if(c == 'i' || c == 'I'){
+            if(speedx<100 && speedy<100){
+                ++speedx;
+                ++speedy;
+            }
         }
         usleep(10000);
     }
@@ -56,19 +70,22 @@ protected:
 
 public:
     Runner(int h = WINDOWHEIGHT, int w = WINDOWWIDTH) : Master(h, w) {
-        peta = Object(0, 0, "");
+        peta = Object(0, 0, "Asset/object_map.text");
     }
 
     void start() {
         // Make map
         const float normal = 1 / max(1.0f * peta.getWidth() / xend, 1.0f * peta.getHeight() / yend);
         float ratio = 1;
+        float dx = 0;
+        float dy = 0;
 
 
         while(true){
             // Creating MAP
             MoveableObject map = peta;
             map.selfDilate(0, 0, normal * ratio);
+            map.setPos(dx, dy);
 
             // Drawing
             clearWindow();
@@ -107,8 +124,8 @@ public:
                  */
                 if(moveHor != 0){
                     if(moveHor > 0){
-                        if((int)map.getRefPos().getX() < 0){
-                            map.setPos(map.getRefPos().getX() + 1, map.getRefPos().getY());
+                        if((int) dx < 0){
+                            dx += speedx;
                             --moveHor;
                         }
                         else{
@@ -116,8 +133,8 @@ public:
                         }
                     }
                     else{
-                        if((int)map.getRefPos().getX() + map.getWidth() >= xend){
-                            map.setPos(map.getRefPos().getX() - 1, map.getRefPos().getY());
+                        if((int)dx + map.getWidth() >= xend){
+                            dx -= speedx;
                             ++moveHor;
                         }
                         else{
@@ -127,8 +144,8 @@ public:
                 }
                 if(moveVer != 0) {
                     if(moveVer > 0){
-                        if((int)map.getRefPos().getY() < 0){
-                            map.setPos(map.getRefPos().getX(), map.getRefPos().getY() + 1);
+                        if((int)dy < 0){
+                            dy += speedy;
                             --moveVer;
                         }
                         else{
@@ -136,8 +153,8 @@ public:
                         }
                     }
                     else{
-                        if((int)map.getRefPos().getY() + map.getHeight() >= yend){
-                            map.setPos(map.getRefPos().getX(), map.getRefPos().getY() - 1);
+                        if((int)dy + map.getHeight() >= yend){
+                            dy -= speedy;
                             ++moveVer;
                         }
                         else{
@@ -174,7 +191,7 @@ int main() {
     keepreading = false;
 
     /* close */
-    pthread_exit(NULL);
+    pthread_join(thread, nullptr);
     res = tcsetattr(STDIN_FILENO, TCSANOW, &org_opts);
     assert(res == 0);
     return 0;
