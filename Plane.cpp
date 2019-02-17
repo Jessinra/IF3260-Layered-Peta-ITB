@@ -72,6 +72,7 @@ void Plane::selfDilate(float pivotX, float pivotY, float scalingConstant)
 }
 
 void Plane::calculate() {
+//    cerr<<"aku terpanggil"<<" ";
     if(lines.empty()) return;
 
     this->xMin = min(lines[0].getRefStartPixel().getX(), lines[0].getRefEndPixel().getX());
@@ -93,6 +94,8 @@ void Plane::calculate() {
     this->xMax -= this->xMin;
     this->yMax -= this->yMin;
 
+    this->position.setPoint(this->position.getX() + xMin, this->position.getY() + yMin);
+
     this->xMin = this->yMin = 0;
 }
 
@@ -106,4 +109,23 @@ Point Plane::getLowerRight() const {
 
 Point Plane::getUpperLeft() const {
     return Point(xMin, yMin);
+}
+
+void Plane::setPos(Point position)
+{
+    this->position = position;
+}
+
+void Plane::setPos(float x, float y)
+{
+    this->position = Point(x, y);
+}
+
+
+Point Plane::getPos() const {
+    return this->position;
+}
+
+const Point & Plane::getRefPos() const {
+    return this->position;
 }

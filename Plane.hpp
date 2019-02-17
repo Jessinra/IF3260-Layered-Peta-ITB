@@ -9,6 +9,7 @@ using namespace std;
 class Plane
 {
   protected:
+    Point position;
     vector<Line> lines;
 
     float xMin, yMin, xMax, yMax;
@@ -23,7 +24,7 @@ class Plane
 
     void setColor(unsigned int color);
     void setPriority(int priority);
-    virtual void calculate();
+    void calculate();
 
     unsigned int getColor() const;
     int getPriority() const;
@@ -31,6 +32,12 @@ class Plane
     int getHeight() const;
     Point getLowerRight() const;
     Point getUpperLeft() const;
+
+    void setPos(Point position);
+    void setPos(float x, float y);
+
+    Point getPos() const;
+    const Point & getRefPos() const;
 
     vector<Line> getLines() const;
     vector<Line> & getRefLines();
