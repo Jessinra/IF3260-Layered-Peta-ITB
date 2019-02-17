@@ -28,7 +28,6 @@ void *readinput(void *thread_id) {
     char c;
     while (keepreading) {
         c = getchar();
-        /* TODO */
         if(c == 'w' || c == 'W'){
             ++moveVer;
         }
