@@ -2,3 +2,6 @@ object_road_Ganeca
 object_road_SR
 object_road_Tamansari
 object_road_jalanI
+object_road_jalanIX
+object_road_jalanX
+object_road_jalanD
