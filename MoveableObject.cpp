@@ -98,12 +98,14 @@ void MoveableObject::selfRotate(float pivotX, float pivotY, float theta)
 void MoveableObject::selfDilate(float pivotX, float pivotY, float scalingConstant)
 {
     pivotX -= position.getX();
-    pivotY -= position.getY();  
+    pivotY -= position.getY();
 
-    for (Plane &plane : this->planes)
+    for (MoveablePlane &plane : this->planes)
     {
         plane.selfDilate(pivotX, pivotY, scalingConstant);
     }
+
+//    position.setPoint(position.getX() * scalingConstant, position.getY() * scalingConstant);
 
     calculate();
 }
