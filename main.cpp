@@ -79,12 +79,13 @@ public:
         float dx = 0;
         float dy = 0;
 
-
+        MoveableObject map = peta;
+        map.selfDilate(0, 0, normal*ratio);
         while(true){
             // Creating MAP
-            MoveableObject map = peta;
-            map.selfDilate(0, 0, normal * ratio);
-            map.setPos(dx, dy);
+//            MoveableObject map = peta;
+//            map.selfDilate(0, 0, normal * ratio);
+//            map.setPos(dx, dy);
 
             // Drawing
             clearWindow();
@@ -116,6 +117,9 @@ public:
                         zoom = 0;
                     }
                 }
+                map = peta;
+                map.selfDilate(0, 0, normal*ratio);
+                map.setPos(dx, dy);
             }
             else{
                 /* TODO
@@ -126,6 +130,7 @@ public:
                         if((int) dx < 0){
                             dx += speedx;
                             --moveHor;
+                            map.setPos(dx, dy);
                         }
                         else{
                             moveHor = 0;
@@ -135,6 +140,7 @@ public:
                         if((int)dx + map.getWidth() >= xend){
                             dx -= speedx;
                             ++moveHor;
+                            map.setPos(dx, dy);
                         }
                         else{
                             moveHor = 0;
@@ -146,6 +152,7 @@ public:
                         if((int)dy < 0){
                             dy += speedy;
                             --moveVer;
+                            map.setPos(dx, dy);
                         }
                         else{
                             moveVer = 0;
@@ -155,6 +162,7 @@ public:
                         if((int)dy + map.getHeight() >= yend){
                             dy -= speedy;
                             ++moveVer;
+                            map.setPos(dx, dy);
                         }
                         else{
                             moveVer = 0;
