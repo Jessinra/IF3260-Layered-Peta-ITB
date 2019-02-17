@@ -62,6 +62,9 @@ void MoveablePlane::selfRotate(float pivotX, float pivotY, float theta)
 
 void MoveablePlane::selfDilate(float pivotX, float pivotY, float scalingConstant)
 {
+    pivotX -= position.getX();
+    pivotY -= position.getY();
+
     for (Line &line : this->lines){
         line.setStartPixel(line.getStartPixel().dilated(pivotX, pivotY, scalingConstant));
         line.setEndPixel(line.getEndPixel().dilated(pivotX, pivotY, scalingConstant));
