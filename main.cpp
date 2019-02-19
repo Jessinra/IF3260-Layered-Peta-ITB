@@ -89,9 +89,9 @@ public:
         while(true){
             // Drawing
             clearWindow();
-            drawObject(view1, map);
+//            drawObject(view1, map);
             drawSolidObject(view1, map);
-            drawObject(smallmap);
+//            drawObject(smallmap);
             drawSolidObject(smallmap);
             flush();
 
