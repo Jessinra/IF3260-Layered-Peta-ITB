@@ -17,6 +17,8 @@
 #include "PlaneFiller.hpp"
 #include "Pixel.hpp"
 #include "Object.hpp"
+#include "Rectangle.hpp"
+
 using namespace std;
 
 class Master
@@ -83,6 +85,15 @@ class Master
 
     void drawObject(const Object &object);
     void drawSolidObject(const Object &object);
+
+    void assignColor(const Rectangle &view, int x, int y, unsigned int color);
+    void drawLine(const Rectangle &view, int positionX, int positionY, const Line &line);
+
+    void drawPlane(const Rectangle &view, int xStart, int yStart, const Plane &plane);
+    void drawSolidPlane(const Rectangle &view, int xStart, int yStart, const Plane &plane);
+
+    void drawObject(const Rectangle &view, const Object &object);
+    void drawSolidObject(const Rectangle &view, const Object &object);
 };
 
 #endif

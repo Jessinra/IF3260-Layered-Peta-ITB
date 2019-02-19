@@ -302,3 +302,123 @@ void Master::drawSolidObject(const Object &object) {
 void Master::flush() {
     memcpy(fbp, buffer, (yend * ymultiplier + yadder));
 }
+
+void Master::assignColor(const Rectangle &view, int x, int y, unsigned int color) {
+    int location = x * xmultiplier + xadder + y * ymultiplier + yadder;
+    if ((x>=view.getXMin() && x<view.getXMax() && y>=view.getYMin() && y<view.getYMax()) && *((unsigned int *) (buffer + location)) == 0) {
+        *((unsigned int *) (buffer + location)) = color;
+    }
+}
+
+void Master::drawLine(const Rectangle &view, int positionX, int positionY, const Line &line) {
+    // Bresenham's line algorithm with gradient coloring
+
+    // Position section
+    int xStart = line.getStartPixel().getX() + positionX;
+    int yStart = line.getStartPixel().getY() + positionY;
+    int xEnd = line.getEndPixel().getX() + positionX;
+    int yEnd = line.getEndPixel().getY() + positionY;
+
+    if(max(xStart, xEnd) < view.getXMin() || min(xStart, xEnd) >= view.getXMax())
+        return;
+    if(max(yStart, yEnd) < view.getXMin() || min(yStart, yEnd) >= view.getYMax())
+        return;
+
+    // Color section
+    int colorStart = line.getStartPixel().getColor();
+    int colorEnd = line.getEndPixel().getColor();
+
+    // Setup Const
+    const float deltaX = xEnd - xStart;
+    const float deltaY = yEnd - yStart;
+
+    const float deltaRed = ((colorEnd & 0xff0000) - (colorStart & 0xff0000)) >> 16;
+    const float deltaGreen = ((colorEnd & 0xff00) - (colorStart & 0xff00)) >> 8;
+    const float deltaBlue = ((colorEnd & 0xff) - (colorStart & 0xff));
+
+    const float manhattanDist = fabs(deltaX) + fabs(deltaY) + 1;
+
+    const float redStep = deltaRed / manhattanDist;
+    const float greenStep = deltaGreen / manhattanDist;
+    const float blueStep = deltaBlue / manhattanDist;
+
+    const int xStep = deltaX >= 0 ? 1 : -1;
+    const int yStep = deltaY >= 0 ? 1 : -1;
+
+    float red = (colorStart & 0xff0000) >> 16;
+    float green = (colorStart & 0xff00) >> 8;
+    float blue = colorStart & 0xff;
+
+    if (xStart == xEnd) {
+        for (int y = yStart; y != yEnd + yStep; y += yStep) {
+            unsigned int color = ((unsigned int) floor(red) << 16) + ((unsigned int) floor(green) << 8) +
+                                 ((unsigned int) floor(blue));
+            if (frameColor(xStart, y) == 0) {
+                assignColor(view, xStart, y, color);
+            }
+
+            red += redStep;
+            green += greenStep;
+            blue += blueStep;
+        }
+        return;
+    }
+
+    int y = yStart;
+    const float deltaErr = fabs(deltaY / deltaX);
+    float error = 0;
+    for (int x = xStart; x != xEnd + xStep;) {
+        unsigned int color =
+                ((unsigned int) floor(red) << 16) + ((unsigned int) floor(green) << 8) + ((unsigned int) floor(blue));
+        if (frameColor(x, y) == 0) {
+            assignColor(view, x, y, color);
+        }
+
+        if (error >= 0.5) {
+            y += yStep;
+            error -= 1;
+        } else {
+            error += deltaErr;
+            x += xStep;
+            if (error >= 0.5) {
+                y += yStep;
+                error -= 1;
+            }
+        }
+
+        red += redStep;
+        green += greenStep;
+        blue += blueStep;
+    }
+}
+
+void Master::drawPlane(const Rectangle &view, int xStart, int yStart, const Plane &plane) {
+    for (const Line &line : plane.getConstRefLines()) {
+        drawLine(view, xStart, yStart, line);
+    }
+}
+
+void Master::drawSolidPlane(const Rectangle &view, int xStart, int yStart, const Plane &plane) {
+    vector<Line> planeFillerLines = this->planeFiller.getPlaneFillerLines(plane);
+
+    for (const Line &line : planeFillerLines) {
+        drawLine(view, xStart, yStart, line);
+    }
+}
+
+void Master::drawObject(const Rectangle &view, const Object &object) {
+    for (const MoveablePlane &plane : object.getConstRefPlanes()) {
+        if(object.getRefPos().getX() >= view.getXMax() || object.getRefPos().getY() >= view.getYMax()
+           || object.getRefPos().getX() + plane.getLowerRight().getX() < view.getXMin() || object.getRefPos().getY() + plane.getLowerRight().getY() < view.getYMin()) continue;
+        drawPlane(view, object.getRefPos().getX() + plane.getRefPos().getX(), object.getRefPos().getY() + plane.getRefPos().getY(), plane);
+    }
+}
+
+void Master::drawSolidObject(const Rectangle &view, const Object &object) {
+    for (const MoveablePlane &plane : object.getConstRefPlanes()) {
+        if(object.getRefPos().getX() >= view.getXMax() || object.getRefPos().getY() >= view.getYMax()
+           || object.getRefPos().getX() + plane.getLowerRight().getX() < view.getXMin() || object.getRefPos().getY() + plane.getLowerRight().getY() < view.getYMin()) continue;
+        drawSolidPlane(view, object.getRefPos().getX() + plane.getRefPos().getX(), object.getRefPos().getY() + plane.getRefPos().getY(), plane);
+    }
+}
+
