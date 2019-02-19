@@ -78,19 +78,21 @@ public:
         float ratio = 1;
         float dx = 0;
         float dy = 0;
+        Rectangle view1(0, 0, 700, WINDOWHEIGHT);
+        Rectangle view2(710, 0, 1000, WINDOWHEIGHT);
 
+        MoveableObject smallmap = peta;
+        smallmap.setPos(720, 0);
+        smallmap.selfDilate(720, 0, 1.4);
         MoveableObject map = peta;
         map.selfDilate(0, 0, normal*ratio);
         while(true){
-            // Creating MAP
-//            MoveableObject map = peta;
-//            map.selfDilate(0, 0, normal * ratio);
-//            map.setPos(dx, dy);
-
             // Drawing
             clearWindow();
-            drawObject(map);
-            drawSolidObject(map);
+            drawObject(view1, map);
+            drawSolidObject(view1, map);
+            drawObject(smallmap);
+            drawSolidObject(smallmap);
             flush();
 
             // Update
