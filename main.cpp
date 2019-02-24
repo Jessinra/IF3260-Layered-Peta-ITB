@@ -38,25 +38,25 @@ void *readinput(void *thread_id) {
         if(c == 'w' || c == 'W'){
             ++moveVer;
             for (int i = 0; i < objectIds.size(); i++) {
-                moveVers[objectIds[i]]++;
+                ++moveVers[objectIds[i]];
             }
         }
         else if(c == 'a' || c == 'A'){
             ++moveHor;
             for (int i = 0; i < objectIds.size(); i++) {
-                moveHors[objectIds[i]]++;
+                ++moveHors[objectIds[i]];
             }
         }
         else if(c == 's' || c == 'S'){
             --moveVer;
             for (int i = 0; i < objectIds.size(); i++) {
-                moveVers[objectIds[i]]--;
+                --moveVers[objectIds[i]];
             }
         }
         else if(c == 'd' || c == 'D'){
             --moveHor;
             for (int i = 0; i < objectIds.size(); i++) {
-                moveHors[objectIds[i]]--;
+                --moveHors[objectIds[i]];
             }
         }
         else if(c == 'j' || c == 'J'){
@@ -93,7 +93,7 @@ void checkShift(MoveableObject *mObject, int xend, int yend) {
     if (moveHors[mObject->getId()] != 0) {
         if (moveHors[mObject->getId()] > 0) {
             if ((int) dxs[mObject->getId()] < 0) {
-                dxs[mObject->getId()]--;
+                dxs[mObject->getId()] += speedx;
                 --moveHors[mObject->getId()];
                 mObject->setPos(dxs[mObject->getId()], dys[mObject->getId()]);
             } else {
@@ -101,12 +101,10 @@ void checkShift(MoveableObject *mObject, int xend, int yend) {
             }
         } else {
             if ((int) dxs[mObject->getId()] + mObject->getWidth() >= xend) {
-                cout << "TAI KUCING 1";
                 dxs[mObject->getId()] -= speedx;
                 ++moveHors[mObject->getId()];
                 mObject->setPos(dxs[mObject->getId()], dys[mObject->getId()]);
             } else {
-                cout << "TAI KUCING 2";
                 moveHors[mObject->getId()] = 0;
             }
         }
@@ -229,7 +227,6 @@ public:
                 mBuilding.selfDilate(0, 0, normal*ratio);
                 dxs[mBuilding.getId()] = mBuilding.getPos().getX();
                 dys[mBuilding.getId()] = mBuilding.getPos().getY();
-
                 mBuilding.setPos(dxs[mBuilding.getId()], dys[mBuilding.getId()]);
 
                 mRoad = road;
