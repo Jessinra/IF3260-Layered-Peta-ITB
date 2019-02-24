@@ -1,6 +1,21 @@
 
 #include "Object.hpp"
 
+string gen_random(const int len) {
+    string s = "";
+    
+    static const char alphanum[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+
+    for (int i = 0; i < len; ++i) {
+        s += alphanum[rand() % (sizeof(alphanum) - 1)];
+    }
+
+    return s;
+}
+
 Object::Object()
 {
 }
@@ -56,6 +71,8 @@ Object::Object(float x, float y, std::string filename)
         this->planes.emplace_back(MoveablePlane(offsetX, offsetY, lines, planeColor, priority));
     }
 
+    this->id = gen_random(10);
+
     calculate();
     sortPriority();
 
@@ -89,6 +106,10 @@ int Object::getWidth() const
 int Object::getHeight() const
 {
     return this->yMax - this->yMin + 1;
+}
+
+string Object::getId() const {
+    return this->id;
 }
 
 vector<MoveablePlane> &Object::getRefPlanes(){

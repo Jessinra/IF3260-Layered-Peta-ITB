@@ -13,6 +13,8 @@ using namespace std;
 class Object
 {
   protected:
+    string id;
+
     Point position;
     vector<MoveablePlane> planes;
 
@@ -31,6 +33,7 @@ class Object
     Point getPos() const;
     int getWidth() const;
     int getHeight() const;
+    string getId() const; 
 
     vector<MoveablePlane> & getRefPlanes();
     const vector<MoveablePlane> & getConstRefPlanes() const;
