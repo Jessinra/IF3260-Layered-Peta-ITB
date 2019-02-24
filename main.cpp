@@ -236,54 +236,6 @@ public:
                 mRoad.setPos(dxs[mRoad.getId()], dys[mRoad.getId()]);                
             }
             else{
-                /* TODO
-                 * Make it smart when size is small
-                 */
-                if(moveHor != 0){
-                    if(moveHor > 0){
-                        if((int) dx < 0){
-                            dx += speedx;
-                            --moveHor;
-                            // map.setPos(dx, dy);
-                        }
-                        else{
-                            moveHor = 0;
-                        }
-                    }
-                    else{
-                        cout << "TAI KUCING 2\n";
-                        // if((int)dx + map.getWidth() >= xend){
-                        //     dx -= speedx;
-                        //     ++moveHor;
-                        //     map.setPos(dx, dy);
-                        // }
-                        // else{
-                        //     moveHor = 0;
-                        // }
-                    }
-                }
-                if(moveVer != 0) {
-                    if(moveVer > 0){
-                        if((int)dy < 0){
-                            dy += speedy;
-                            --moveVer;
-                            // map.setPos(dx, dy);
-                        }
-                        else{
-                            moveVer = 0;
-                        }
-                    }
-                    else{
-                        // if((int)dy + map.getHeight() >= yend){
-                        //     dy -= speedy;
-                        //     ++moveVer;
-                        //     map.setPos(dx, dy);
-                        // }
-                        // else{
-                        //     moveVer = 0;
-                        // }
-                    }
-                }
                 checkShift(&mBuilding, xend, yend);
                 checkShift(&mRoad, xend, yend);
             }
