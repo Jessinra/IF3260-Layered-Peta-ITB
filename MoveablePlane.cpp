@@ -1,15 +1,11 @@
 #include <iostream>
 #include "MoveablePlane.hpp"
 
-MoveablePlane::MoveablePlane(float x, float y, const vector<Line> &lines, int color, int priority) : Plane(lines, color, priority)
-{
-    this->position = Point(x, y);
-}
+MoveablePlane::MoveablePlane(float x, float y, const vector<Line> &lines, int color, int priority) : Plane(Point(x, y), lines, color, priority)
+{}
 
-MoveablePlane::MoveablePlane(float x, float y, const Plane &plane) : Plane(plane)
-{
-    this->position = Point(x, y);
-}
+MoveablePlane::MoveablePlane(float x, float y, const Plane &plane) : Plane(Point(x, y), plane)
+{}
 
 void MoveablePlane::selfRotate(float pivotX, float pivotY, float theta)
 {
