@@ -1,0 +1,6 @@
+1
+4 0x0000ff 1 090 125
+090 125 0xffffff 092 125 0xffffff
+092 125 0xffffff 092 135 0xffffff
+092 135 0xffffff 090 135 0xffffff
+090 135 0xffffff 090 125 0xffffff
