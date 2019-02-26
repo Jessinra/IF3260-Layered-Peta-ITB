@@ -115,12 +115,6 @@ string Object::getId() const {
 vector<MoveablePlane> &Object::getRefPlanes(){
     return this->planes;
 }
-
-const Point &Object::getRefPos() const
-{
-    return this->position;
-}
-
 void Object::reverseHorizontal()
 {
     // implement reverse as an object
@@ -171,4 +165,12 @@ void Object::sortPriority() {
     sort(planes.begin(), planes.end(), [this](const MoveablePlane &a, const MoveablePlane &b) -> bool{
         return a.getPriority() < b.getPriority();
     });
+}
+
+Point &Object::getRefPos() {
+    return position;
+}
+
+const Point &Object::getConstRefPos() const {
+    return position;
 }

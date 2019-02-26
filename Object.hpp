@@ -33,13 +33,16 @@ class Object
     Point getPos() const;
     int getWidth() const;
     int getHeight() const;
-    string getId() const; 
-
-    vector<MoveablePlane> & getRefPlanes();
-    const vector<MoveablePlane> & getConstRefPlanes() const;
-    const Point&getRefPos() const;
+    string getId() const;
     Point getUpperLeft() const;
     Point getLowerRight() const;
+
+    Point &getRefPos();
+    vector<MoveablePlane> & getRefPlanes();
+
+    const vector<MoveablePlane> & getConstRefPlanes() const;
+    const Point &getConstRefPos() const;
+
     void sortPriority();
 
     void reverseHorizontal(); // TODO
