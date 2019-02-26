@@ -13,6 +13,9 @@ MoveablePlane::MoveablePlane(float x, float y, const Plane &plane) : Plane(plane
 
 void MoveablePlane::selfRotate(float pivotX, float pivotY, float theta)
 {
+    pivotX -= position.getX();
+    pivotY -= position.getY();
+
     for (Line &line : this->lines)
     {
         line.setStartPixel(line.getStartPixel().rotation(pivotX, pivotY, theta));
