@@ -89,48 +89,6 @@ void *readinput(void *thread_id) {
     pthread_exit(nullptr);
 }
 
-void checkShift(MoveableObject *mObject, int xend, int yend) {
-    if (moveHors[mObject->getId()] != 0) {
-        if (moveHors[mObject->getId()] > 0) {
-            if ((int) dxs[mObject->getId()] < 0) {
-                dxs[mObject->getId()] += speedx;
-                --moveHors[mObject->getId()];
-                mObject->setPos(dxs[mObject->getId()], dys[mObject->getId()]);
-            } else {
-                moveHors[mObject->getId()] = 0;
-            }
-        } else {
-            if ((int) dxs[mObject->getId()] + mObject->getWidth() >= xend) {
-                dxs[mObject->getId()] -= speedx;
-                ++moveHors[mObject->getId()];
-                mObject->setPos(dxs[mObject->getId()], dys[mObject->getId()]);
-            } else {
-                moveHors[mObject->getId()] = 0;
-            }
-        }
-    }
-
-    if (moveVers[mObject->getId()] != 0) {
-        if (moveVers[mObject->getId()] > 0) {
-            if ((int)dys[mObject->getId()] < 0) {
-                dys[mObject->getId()] += speedy;
-                --moveVers[mObject->getId()];
-                mObject->setPos(dxs[mObject->getId()], dys[mObject->getId()]);
-            } else {
-                moveVers[mObject->getId()] = 0;
-            }
-        } else {
-            if ((int)dys[mObject->getId()] + mObject->getHeight() >= yend) {
-                dys[mObject->getId()] -= speedy;
-                ++moveVers[mObject->getId()];
-                mObject->setPos(dxs[mObject->getId()], dys[mObject->getId()]);
-            } else {
-                moveVers[mObject->getId()] = 0;
-            }
-        }
-    }
-}
-
 class Runner : public Master {
 protected:
     Object peta;
@@ -236,8 +194,95 @@ public:
                 mRoad.setPos(dxs[mRoad.getId()], dys[mRoad.getId()]);                
             }
             else{
-                checkShift(&mBuilding, xend, yend);
-                checkShift(&mRoad, xend, yend);
+                /* TODO
+                 * Make it smart when size is small
+                 */
+                if(moveHor != 0){
+                    if(moveHor > 0){
+                        bool shiftLeft = false;
+                        for (string objectId : objectIds) {
+                            if ((int) dxs[objectId] < 0) {
+                                shiftLeft = true;
+                                break;
+                            }
+                        }
+
+                        if (shiftLeft) {
+                            for (string objectId: objectIds) {
+                                dxs[objectId] += speedx;   
+                            }
+                            --moveHor;
+                            mBuilding.setPos(dxs[mBuilding.getId()], dys[mBuilding.getId()]);
+                            mRoad.setPos(dxs[mRoad.getId()], dys[mRoad.getId()]);
+                        } else {
+                            moveHor = 0;
+                        }
+                    }
+                    else{
+                        bool shiftRight = false;
+
+                        if ((int)dxs[mBuilding.getId()] + mBuilding.getWidth() >= xend) {
+                            shiftRight = true;
+                        }
+                        if ((int)dxs[mRoad.getId()] + mRoad.getWidth() >= xend) {
+                            shiftRight = true;
+                        }
+                        
+                        if (shiftRight) {
+                            for (string objectId: objectIds) {
+                                dxs[objectId] -= speedx;   
+                            }
+                            ++moveHor;
+                            mBuilding.setPos(dxs[mBuilding.getId()], dys[mBuilding.getId()]);
+                            mRoad.setPos(dxs[mRoad.getId()], dys[mRoad.getId()]);
+                        } else {
+                            moveHor = 0;
+                        }
+                    }
+                }
+                if(moveVer != 0) {
+                    if(moveVer > 0){
+                        bool shiftUp = false;
+                        for (string objectId : objectIds) {
+                            if ((int)dys[objectId] < 0) {
+                                shiftUp = true;
+                                break;
+                            }
+                        }
+
+                        if (shiftUp) {
+                            for (string objectId : objectIds) {
+                                dys[objectId] += speedy;
+                            }
+                            --moveVer;
+                            mBuilding.setPos(dxs[mBuilding.getId()], dys[mBuilding.getId()]);
+                            mRoad.setPos(dxs[mRoad.getId()], dys[mRoad.getId()]);
+                        } else {
+                            moveVer = 0;
+                        }
+                    }
+                    else{
+                        bool shiftDown = false;
+
+                        if ((int)dys[mBuilding.getId()] + mBuilding.getHeight() >= yend) {
+                            shiftDown = true;
+                        }
+                        if ((int)dys[mRoad.getId()] + mRoad.getHeight() >= yend) {
+                            shiftDown = true;
+                        }
+                        
+                        if (shiftDown) {
+                             for (string objectId : objectIds) {
+                                dys[objectId] -= speedy;
+                            }
+                            ++moveVer;
+                            mBuilding.setPos(dxs[mBuilding.getId()], dys[mBuilding.getId()]);
+                            mRoad.setPos(dxs[mRoad.getId()], dys[mRoad.getId()]);
+                        } else {
+                            moveVer = 0;
+                        }
+                    }
+                }
             }
             usleep(6000);
         }
