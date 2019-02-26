@@ -87,6 +87,7 @@ void MoveableObject::selfRotate(float pivotX, float pivotY, float theta)
 {
     pivotX -= this->position.getX();
     pivotY -= this->position.getY();
+
     for (Plane &plane : this->planes)
     {
         plane.selfRotate(pivotX, pivotY, theta);
