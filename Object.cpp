@@ -151,6 +151,17 @@ void Object::calculate() {
         xMax = max(xMax, planes[i].getLowerRight().getX() + planes[i].getRefPos().getX());
         yMax = max(yMax, planes[i].getLowerRight().getY() + planes[i].getRefPos().getY());
     }
+
+    xMax -= xMin;
+    yMax -= yMin;
+
+    for(MoveablePlane &plane : planes){
+        plane.setPos(plane.getRefPos().getX() - xMin, plane.getRefPos().getY() - yMin);
+    }
+
+    position.setPoint(position.getX() + xMin, position.getY() + yMin);
+
+    xMin = yMin = 0;
 }
 
 Point Object::getUpperLeft() const {

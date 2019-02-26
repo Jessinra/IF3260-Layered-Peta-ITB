@@ -16,7 +16,6 @@ class MoveableObject : public Object
     MoveableObject(const Object &obj);
     MoveableObject(float dx, float dy, float speed, const Object &obj);
 
-    void calculate() override;
     void setVector(float dx, float dy);
     void setSpeed(float speed);
 
