@@ -23,7 +23,7 @@ Plane::Plane(const Point &pos, const vector<Line> &lines, unsigned int color, in
 
 
 Plane::Plane(const Point &pos, const Plane &ot) {
-    this->box = ot->getRefBox();
+    this->box = ot.getConstRefBoundedBox();
     this->position = pos;
     this->calculate();
 }

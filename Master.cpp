@@ -289,13 +289,13 @@ void Master::drawSolidPlane(int xStart, int yStart, const Plane &plane) {
 
 void Master::drawObject(const Object &object) {
     for (const MoveablePlane &plane : object.getConstRefPlanes()) {
-        drawPlane(object.getRefPos().getX() + plane.getRefPos().getX(), object.getRefPos().getY() + plane.getRefPos().getY(), plane);
+        drawPlane(object.getRefPos().getX() + plane.getConstRefPos().getX(), object.getRefPos().getY() + plane.getConstRefPos().getY(), plane);
     }
 }
 
 void Master::drawSolidObject(const Object &object) {
     for (const MoveablePlane &plane : object.getConstRefPlanes()) {
-        drawSolidPlane(object.getRefPos().getX() + plane.getRefPos().getX(), object.getRefPos().getY() + plane.getRefPos().getY(), plane);
+        drawSolidPlane(object.getRefPos().getX() + plane.getConstRefPos().getX(), object.getRefPos().getY() + plane.getConstRefPos().getY(), plane);
     }
 }
 
@@ -410,7 +410,7 @@ void Master::drawObject(const Rectangle &view, const Object &object) {
     for (const MoveablePlane &plane : object.getConstRefPlanes()) {
         if(object.getRefPos().getX() >= view.getXMax() || object.getRefPos().getY() >= view.getYMax()
            || object.getRefPos().getX() + plane.getLowerRight().getX() < view.getXMin() || object.getRefPos().getY() + plane.getLowerRight().getY() < view.getYMin()) continue;
-        drawPlane(view, object.getRefPos().getX() + plane.getRefPos().getX(), object.getRefPos().getY() + plane.getRefPos().getY(), plane);
+        drawPlane(view, object.getRefPos().getX() + plane.getConstRefPos().getX(), object.getRefPos().getY() + plane.getConstRefPos().getY(), plane);
     }
 }
 
@@ -418,8 +418,8 @@ void Master::drawSolidObject(const Rectangle &view, const Object &object) {
     for (const MoveablePlane &plane : object.getConstRefPlanes()) {
         if(object.getRefPos().getX() >= view.getXMax() || object.getRefPos().getY() >= view.getYMax()
            || object.getRefPos().getX() + plane.getLowerRight().getX() < view.getXMin() || object.getRefPos().getY() + plane.getLowerRight().getY() < view.getYMin()) continue;
-        drawPlane(view, object.getRefPos().getX() + plane.getRefPos().getX(), object.getRefPos().getY() + plane.getRefPos().getY(), plane);
-        drawSolidPlane(view, object.getRefPos().getX() + plane.getRefPos().getX(), object.getRefPos().getY() + plane.getRefPos().getY(), plane);
+        drawPlane(view, object.getRefPos().getX() + plane.getConstRefPos().getX(), object.getRefPos().getY() + plane.getConstRefPos().getY(), plane);
+        drawSolidPlane(view, object.getRefPos().getX() + plane.getConstRefPos().getX(), object.getRefPos().getY() + plane.getConstRefPos().getY(), plane);
     }
 }
 
