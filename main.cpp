@@ -82,6 +82,8 @@ void *readinput(void *thread_id) {
             display[objectIds[1]] = !display[objectIds[1]];
         } else if (c == '3') {
             display[objectIds[2]] = !display[objectIds[2]];
+        }else if (c == '4') {
+            display[objectIds[3]] = !display[objectIds[3]];
         }
 
         usleep(10000);
@@ -92,19 +94,25 @@ void *readinput(void *thread_id) {
 class Runner : public Master {
 protected:
     Object peta;
-    Object building, road;
+    Object building, road, pond, tree;
 
 public:
     Runner(int h = WINDOWHEIGHT, int w = WINDOWWIDTH) : Master(h, w) {
-        peta = Object(0, 0, "Asset/object_map.text");
+        peta = Object(0, 0, "Asset/object_map.txt");
         
         building = Object(0, 0, "Asset/object_building.txt");
         road = Object(0, 0, "Asset/object_road.txt");
+        pond = Object(0, 0, "Asset/object_kolam.txt");
+        tree = Object(0, 0, "Asset/object_pohon.txt");
 
         display[building.getId()] = true;
         objectIds.push_back(building.getId());
         display[road.getId()] = true;
         objectIds.push_back(road.getId());
+        display[pond.getId()] = true;
+        objectIds.push_back(pond.getId());
+        display[tree.getId()] = true;
+        objectIds.push_back(tree.getId());
     }
 
     void start() {
@@ -127,28 +135,40 @@ public:
         mBuilding.selfDilate(0, 0, normal*ratio);
         MoveableObject mRoad = road;
         mRoad.selfDilate(0, 0, normal*ratio);
+        MoveableObject mPond = pond;
+        mPond.selfDilate(0, 0, normal*ratio);
+        MoveableObject mTree = tree;
+        mTree.selfDilate(0, 0, normal*ratio);
 
-        dxs[mBuilding.getId()] = mBuilding.getPos().getX();
-        dys[mBuilding.getId()] = mBuilding.getPos().getY();
-        dxs[mRoad.getId()] = mRoad.getPos().getX();        
-        dys[mRoad.getId()] = mRoad.getPos().getY();
+        dxs[mBuilding.getId()] = 0;
+        dys[mBuilding.getId()] = 0;
+        dxs[mRoad.getId()] = 0;
+        dys[mRoad.getId()] = 0;
+        dxs[mPond.getId()] = 0;
+        dys[mPond.getId()] = 0;
+        dxs[mTree.getId()] = 0;
+        dys[mTree.getId()] = 0;
 
+        cerr<<"mulai"<<endl;
         while(true){
             // Drawing
             clearWindow();
-//            drawObject(view1, map);
-            // drawSolidObject(view1, map);
-            drawObject(smallmap);
             drawSolidObject(smallmap);
 
             if (display[mBuilding.getId()]) {
-                drawObject(view1, mBuilding);
                 drawSolidObject(view1, mBuilding);
             }
 
             if (display[mRoad.getId()]) {
-                drawObject(view1, mRoad);
                 drawSolidObject(view1, mRoad);
+            }
+
+            if (display[mPond.getId()]) {
+                drawSolidObject(view1, mPond);
+            }
+
+            if (display[mTree.getId()]) {
+                drawSolidObject(view1, mTree);
             }
 
             flush();
@@ -177,21 +197,22 @@ public:
                         zoom = 0;
                     }
                 }
-                // map = peta;
-                // map.selfDilate(0, 0, normal*ratio);
-                // map.setPos(dx, dy);
 
                 mBuilding = building;
                 mBuilding.selfDilate(0, 0, normal*ratio);
-                dxs[mBuilding.getId()] = mBuilding.getPos().getX();
-                dys[mBuilding.getId()] = mBuilding.getPos().getY();
-                mBuilding.setPos(dxs[mBuilding.getId()], dys[mBuilding.getId()]);
+                mBuilding.setPos(mBuilding.getRefPos().getX() + dxs[mBuilding.getId()], mBuilding.getRefPos().getY() + dys[mBuilding.getId()]);
 
                 mRoad = road;
                 mRoad.selfDilate(0, 0, normal*ratio);
-                dxs[mRoad.getId()] = mRoad.getPos().getX();        
-                dys[mRoad.getId()] = mRoad.getPos().getY();
-                mRoad.setPos(dxs[mRoad.getId()], dys[mRoad.getId()]);                
+                mRoad.setPos(mRoad.getRefPos().getX() + dxs[mRoad.getId()], mRoad.getRefPos().getY() + dys[mRoad.getId()]);
+
+                mPond = pond;
+                mPond.selfDilate(0, 0, normal*ratio);
+                mPond.setPos(mPond.getRefPos().getX() + dxs[mPond.getId()], mPond.getRefPos().getY() + dys[mPond.getId()]);
+
+                mTree = tree;
+                mTree.selfDilate(0, 0, normal*ratio);
+                mTree.setPos(mTree.getRefPos().getX() + dxs[mTree.getId()], mTree.getRefPos().getY() + dys[mTree.getId()]);
             }
             else{
                 /* TODO
@@ -212,8 +233,10 @@ public:
                                 dxs[objectId] += speedx;   
                             }
                             --moveHor;
-                            mBuilding.setPos(dxs[mBuilding.getId()], dys[mBuilding.getId()]);
-                            mRoad.setPos(dxs[mRoad.getId()], dys[mRoad.getId()]);
+                            mBuilding.setPos(mBuilding.getRefPos().getX() + speedx, mBuilding.getRefPos().getY());
+                            mRoad.setPos(mRoad.getRefPos().getX() + speedx, mRoad.getRefPos().getY());
+                            mPond.setPos(mPond.getRefPos().getX() + speedx, mPond.getRefPos().getY());
+                            mTree.setPos(mTree.getRefPos().getX() + speedx, mTree.getRefPos().getY());
                         } else {
                             moveHor = 0;
                         }
@@ -233,8 +256,10 @@ public:
                                 dxs[objectId] -= speedx;   
                             }
                             ++moveHor;
-                            mBuilding.setPos(dxs[mBuilding.getId()], dys[mBuilding.getId()]);
-                            mRoad.setPos(dxs[mRoad.getId()], dys[mRoad.getId()]);
+                            mBuilding.setPos(mBuilding.getRefPos().getX() - speedx, mBuilding.getRefPos().getY());
+                            mRoad.setPos(mRoad.getRefPos().getX() - speedx, mRoad.getRefPos().getY());
+                            mPond.setPos(mPond.getRefPos().getX() - speedx, mPond.getRefPos().getY());
+                            mTree.setPos(mTree.getRefPos().getX() - speedx, mTree.getRefPos().getY());
                         } else {
                             moveHor = 0;
                         }
@@ -255,8 +280,10 @@ public:
                                 dys[objectId] += speedy;
                             }
                             --moveVer;
-                            mBuilding.setPos(dxs[mBuilding.getId()], dys[mBuilding.getId()]);
-                            mRoad.setPos(dxs[mRoad.getId()], dys[mRoad.getId()]);
+                            mBuilding.setPos(mBuilding.getRefPos().getX(), mBuilding.getRefPos().getY() + speedy);
+                            mRoad.setPos(mRoad.getRefPos().getX(), mRoad.getRefPos().getY() + speedy);
+                            mPond.setPos(mPond.getRefPos().getX(), mPond.getRefPos().getY() + speedy);
+                            mTree.setPos(mTree.getRefPos().getX(), mTree.getRefPos().getY() + speedy);
                         } else {
                             moveVer = 0;
                         }
@@ -276,8 +303,10 @@ public:
                                 dys[objectId] -= speedy;
                             }
                             ++moveVer;
-                            mBuilding.setPos(dxs[mBuilding.getId()], dys[mBuilding.getId()]);
-                            mRoad.setPos(dxs[mRoad.getId()], dys[mRoad.getId()]);
+                            mBuilding.setPos(mBuilding.getRefPos().getX(), mBuilding.getRefPos().getY() - speedy);
+                            mRoad.setPos(mRoad.getRefPos().getX(), mRoad.getRefPos().getY() - speedy);
+                            mPond.setPos(mPond.getRefPos().getX(), mPond.getRefPos().getY() - speedy);
+                            mTree.setPos(mTree.getRefPos().getX(), mTree.getRefPos().getY() - speedy);
                         } else {
                             moveVer = 0;
                         }
