@@ -173,7 +173,7 @@ Point Object::getLowerRight() const {
 }
 
 void Object::sortPriority() {
-    sort(planes.begin(), planes.end(), [this](const MoveablePlane &a, const MoveablePlane &b) -> bool{
+    stable_sort(planes.begin(), planes.end(), [this](const MoveablePlane &a, const MoveablePlane &b) -> bool{
         return a.getPriority() < b.getPriority();
     });
 }
