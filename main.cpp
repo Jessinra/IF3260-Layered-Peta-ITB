@@ -94,7 +94,7 @@ void *readinput(void *thread_id) {
 class Runner : public Master {
 protected:
     Object peta;
-    Object building, road, pond, tree;
+    Object building, road, pond, tree, kotaklucu;
 
 public:
     Runner(int h = WINDOWHEIGHT, int w = WINDOWWIDTH) : Master(h, w) {
@@ -104,6 +104,7 @@ public:
         road = Object(0, 0, "Asset/object_road.txt");
         pond = Object(0, 0, "Asset/object_kolam.txt");
         tree = Object(0, 0, "Asset/object_pohon.txt");
+        kotaklucu = Object(0, 0, "Asset/object_kotaksial.txt");
 
         display[building.getId()] = true;
         objectIds.push_back(building.getId());
@@ -121,6 +122,9 @@ public:
         float ratio = 1;
         float dx = 0;
         float dy = 0;
+        float kx = 720;
+        float ky = 0;
+        float kz = 1.4;
 
         Rectangle view1(0, 0, 700, WINDOWHEIGHT);
         Rectangle view2(710, 0, 1000, WINDOWHEIGHT);
@@ -128,6 +132,10 @@ public:
         MoveableObject smallmap = peta;
         smallmap.setPos(720, 0);
         smallmap.selfDilate(720, 0, 1.4);
+        MoveableObject mKotaklucu = kotaklucu;
+        mKotaklucu.setPos(kx, ky);
+        mKotaklucu.selfDilate(kx, ky, kz);
+
         // MoveableObject map = peta;
         // map.selfDilate(0, 0, normal*ratio);
 
@@ -153,6 +161,7 @@ public:
         while(true){
             // Drawing
             clearWindow();
+            drawObject(mKotaklucu);
             drawSolidObject(smallmap);
 
             if (display[mBuilding.getId()]) {
@@ -182,6 +191,7 @@ public:
                 if(zoom > 0){
                     if(ratio < maxDilate){
                         ratio *= constFactor;
+                        kz /= constFactor;
                         --zoom;
                     }
                     else{
@@ -191,6 +201,7 @@ public:
                 else{
                     if(ratio > minDilate){
                         ratio /= constFactor;
+                        kz *= constFactor;
                         ++zoom;
                     }
                     else{
@@ -213,6 +224,10 @@ public:
                 mTree = tree;
                 mTree.selfDilate(0, 0, normal*ratio);
                 mTree.setPos(mTree.getRefPos().getX() + dxs[mTree.getId()], mTree.getRefPos().getY() + dys[mTree.getId()]);
+
+                mKotaklucu = kotaklucu;
+                mKotaklucu.setPos(kx, ky);
+                mKotaklucu.selfDilate(kx, ky, kz);
             }
             else{
                 /* TODO
@@ -244,10 +259,16 @@ public:
                     else{
                         bool shiftRight = false;
 
-                        if ((int)dxs[mBuilding.getId()] + mBuilding.getWidth() >= xend) {
+                        if ((int)dxs[mBuilding.getId()] + mBuilding.getWidth() >= 700) {
                             shiftRight = true;
                         }
-                        if ((int)dxs[mRoad.getId()] + mRoad.getWidth() >= xend) {
+                        if ((int)dxs[mRoad.getId()] + mRoad.getWidth() >= 700) {
+                            shiftRight = true;
+                        }
+                        if ((int)dxs[mPond.getId()] + mPond.getWidth() >= 700) {
+                            shiftRight = true;
+                        }
+                        if ((int)dxs[mTree.getId()] + mTree.getWidth() >= 700) {
                             shiftRight = true;
                         }
                         
@@ -297,6 +318,12 @@ public:
                         if ((int)dys[mRoad.getId()] + mRoad.getHeight() >= yend) {
                             shiftDown = true;
                         }
+                        if ((int)dys[mPond.getId()] + mPond.getHeight() >= yend) {
+                            shiftDown = true;
+                        }
+                        if ((int)dys[mTree.getId()] + mTree.getHeight() >= yend) {
+                            shiftDown = true;
+                        }
                         
                         if (shiftDown) {
                              for (string objectId : objectIds) {
@@ -312,6 +339,18 @@ public:
                         }
                     }
                 }
+                float ww = 0, hh = 0;
+                ww = max(ww, (float)mBuilding.getWidth());
+                ww = max(ww, (float)mRoad.getWidth());
+                ww = max(ww, (float)mPond.getWidth());
+                ww = max(ww, (float)mTree.getWidth());
+                hh = max(hh, (float)mBuilding.getHeight());
+                hh = max(hh, (float)mRoad.getHeight());
+                hh = max(hh, (float)mPond.getHeight());
+                hh = max(hh, (float)mTree.getHeight());
+                kx = 720 - (dxs.begin()->second / ww) * smallmap.getWidth();
+                ky = - dys.begin()->second / hh * smallmap.getHeight();
+                mKotaklucu.setPos(kx, ky);
             }
             usleep(6000);
         }
