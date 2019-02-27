@@ -92,6 +92,7 @@ void Plane::calculate() {
         this->yMin = min(this->yMin, min(lines[i].getRefStartPixel().getY(), lines[i].getRefEndPixel().getY()));
         this->yMax = max(this->yMax, max(lines[i].getRefStartPixel().getY(), lines[i].getRefEndPixel().getY()));
     }
+//    cerr<<"aduh "<<xMin<<" "<<yMin<<" "<<xMax<<" "<<yMax<<endl;
 
     for (Line &line : this->lines) {
         line.setStartPixel(Pixel(line.getStartPixel().getX() - this->xMin, line.getStartPixel().getY() - this->yMin,

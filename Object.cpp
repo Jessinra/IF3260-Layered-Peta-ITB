@@ -140,16 +140,16 @@ const vector<MoveablePlane> &Object::getConstRefPlanes() const {
 void Object::calculate() {
     if(planes.empty()) return;
 
-    xMin = planes[0].getUpperLeft().getX() + planes[0].getRefPos().getX();
-    yMin = planes[0].getUpperLeft().getY() + planes[0].getRefPos().getY();
-    xMax = planes[0].getLowerRight().getX() + planes[0].getRefPos().getX();
-    yMax = planes[0].getLowerRight().getY() + planes[0].getRefPos().getY();
+    xMin = planes[0].getRefPos().getX();
+    yMin = planes[0].getRefPos().getY();
+    xMax = planes[0].getRefPos().getX();
+    yMax = planes[0].getRefPos().getY();
 
     for(int i=1;i<planes.size();++i){
-        xMin = min(xMin, planes[i].getUpperLeft().getX() + planes[i].getRefPos().getX());
-        yMin = min(yMin, planes[i].getUpperLeft().getY() + planes[i].getRefPos().getY());
-        xMax = max(xMax, planes[i].getLowerRight().getX() + planes[i].getRefPos().getX());
-        yMax = max(yMax, planes[i].getLowerRight().getY() + planes[i].getRefPos().getY());
+        xMin = min(xMin, planes[i].getRefPos().getX());
+        yMin = min(yMin, planes[i].getRefPos().getY());
+        xMax = max(xMax, planes[i].getRefPos().getX());
+        yMax = max(yMax, planes[i].getRefPos().getY());
     }
 
     xMax -= xMin;
